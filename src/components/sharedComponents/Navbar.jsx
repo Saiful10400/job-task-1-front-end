@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { contextProvider } from "../../context api/Context";
 
 const Navbar = () => {
+  const {user}=useContext(contextProvider)
+  
   const li = (
     <>
       <li>
@@ -38,7 +42,10 @@ const Navbar = () => {
             {li}
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <a className="btn btn-ghost text-xl"><img src={user?.photoURL} className="w-[50px] h-[50px] object-contain" />
+        <span>{user?.displayName}</span>
+        <span>{user?.email}</span>
+        </a>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">{li}</ul>

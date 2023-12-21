@@ -1,12 +1,28 @@
-import { GithubAuthProvider, GoogleAuthProvider, TwitterAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import { createContext } from "react";
+import { GithubAuthProvider, GoogleAuthProvider, TwitterAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import { createContext, useEffect, useState } from "react";
 import { auth } from "../firebase credentials/firebase.config";
 
 export const contextProvider = createContext(null);
 
 const Context = ({ children }) => {
 
+// ass states
+const [user,setUser]=useState(null)
 
+
+// on authstatechange
+useEffect(()=>{
+  const unsubscribe=onAuthStateChanged(auth,(res)=>{
+    setUser(res)
+  })
+  return ()=>unsubscribe
+},[])
+
+
+// create account with Email and password.
+const emailPasswordSignin=(email,password)=>{
+return createUserWithEmailAndPassword(auth,email,password)
+}
 
 // email Password login
 const emailPasswordLogin=(email,password)=>{
@@ -39,7 +55,7 @@ const logout=()=>{
 
 
 // constext api provided data.
-  const contextData = {emailPasswordLogin,googleLogin,gitHubLogin,twitterLogin,logout};
+  const contextData = {emailPasswordLogin,googleLogin,gitHubLogin,twitterLogin,logout,emailPasswordSignin,user};
 
   return (
     <contextProvider.Provider value={contextData}>
