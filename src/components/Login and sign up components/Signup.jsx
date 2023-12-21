@@ -9,7 +9,9 @@ import { updateProfile } from "firebase/auth";
 import { auth } from "../../firebase credentials/firebase.config";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useAxiosPublic from "../../custom Hoocks/useAxiosPublic";
 const Signup = () => {
+  const axiosPublic=useAxiosPublic()
   // shared component paramitre.
   const heading = "Register new account";
   const headingParagraph =
@@ -42,7 +44,15 @@ const Signup = () => {
 
           const userNewdata = { displayName: data.name, photoURL: photourl };
           updateProfile(auth.currentUser, userNewdata).then(() => {
-            toast("Registration successfull.");
+           
+            // adding user into mongodb
+
+            axiosPublic.post("/addAUser",{name:data.name,email:data.email,password:data.password,imgUrl:photourl,profession:data.profession})
+            .then(res=>{
+              console.log(res.data)
+               toast("Registration successfull.");
+            })
+            
           });
         });
     });
@@ -65,6 +75,12 @@ const Signup = () => {
               className={inputstyle}
               type="text"
               placeholder="Enter your name."
+            />
+            <input
+              {...register("profession", { required: true })}
+              className={inputstyle}
+              type="text"
+              placeholder="Enter your profession."
             />
             <input
               {...register("email", { required: true })}

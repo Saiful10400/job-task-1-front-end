@@ -3,10 +3,13 @@ import { NavLink } from "react-router-dom";
 import { contextProvider } from "../../context api/Context";
 
 const Navbar = () => {
-  const {user}=useContext(contextProvider)
+  const {user,logout}=useContext(contextProvider)
   
   const li = (
     <>
+      <li>
+        <NavLink to={"/"}>Home</NavLink>
+      </li>
       <li>
         <NavLink to={"/login"}>Login</NavLink>
       </li>
@@ -51,7 +54,7 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">{li}</ul>
       </div>
       <div className="navbar-end">
-        <a className="btn">Button</a>
+        <a className="btn" onClick={logout}>Logout</a>
       </div>
     </div>
   );

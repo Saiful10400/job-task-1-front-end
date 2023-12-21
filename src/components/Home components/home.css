@@ -1,0 +1,7 @@
+.banner{
+    background: url(../../../public/banner.jpg)  no-repeat;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-blend-mode: overlay;
+ 
+}
