@@ -16,11 +16,12 @@ const formHandle=(data)=>{
     const date=data.date
     const time=data.time
     const priority=data.priority
+    const status=data.status
     
     if(user){
         const email=user.email
 
-        axiosPublic.post("/postATask",{title,description,date,time,priority,email})
+        axiosPublic.post("/postATask",{title,description,date,time,priority,email,status})
     .then(res=>console.log(res.data))
     }
 
@@ -59,6 +60,14 @@ const formHandle=(data)=>{
           <option value="High">High</option>
           <option value="Moderate">Moderate</option>
           <option value="Low">Low</option>
+        </select>
+        <select {...register("status",{required:true})} className={inputstyle + " " + "bg-gray-200 rounded-lg"}>
+          <option disabled selected>
+            Select status
+          </option>
+          <option value="To-do">To-do</option>
+          <option value="Ongoing">Ongoing</option>
+          <option value="Completed">Completed</option>
         </select>
         <button className="btn btn-success btn-md bg-[#57d38c] border-none text-white w-full">
           Add task

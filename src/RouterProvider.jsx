@@ -8,6 +8,7 @@ import TaskManagement from "./components/Dahsboard/sub components/TaskManagement
 import Profile from "./components/Dahsboard/sub components/Profile";
 import CreateTask from "./components/Dahsboard/sub components/CreateTask";
 import Home from "./components/Home components/Home";
+import PrivateRoute from "./components/PrivateRoute";
 
 export const router=createBrowserRouter([
     {
@@ -30,7 +31,7 @@ export const router=createBrowserRouter([
     },
     {
         path:"/dashboard",
-        element:<Dashboard></Dashboard>,
+        element:<PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
         children:[
             {
                 path:"task_manager",

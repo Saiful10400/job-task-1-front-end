@@ -8,12 +8,13 @@ const Context = ({ children }) => {
 
 // ass states
 const [user,setUser]=useState(null)
-
+const [loading,setLoading]=useState(true)
 
 // on authstatechange
 useEffect(()=>{
   const unsubscribe=onAuthStateChanged(auth,(res)=>{
     setUser(res)
+    setLoading(false)
   })
   return ()=>unsubscribe
 },[])
@@ -21,6 +22,7 @@ useEffect(()=>{
 
 // create account with Email and password.
 const emailPasswordSignin=(email,password)=>{
+  setLoading(true)
 return createUserWithEmailAndPassword(auth,email,password)
 }
 
@@ -31,18 +33,21 @@ const emailPasswordLogin=(email,password)=>{
 
 // google login
 const googleLogin=()=>{
+  setLoading(true)
   const googleAuth =new GoogleAuthProvider()
   return signInWithPopup(auth,googleAuth)
 }
 
 // github login
 const gitHubLogin=()=>{
+  setLoading(true)
   const gitHubAuth= new GithubAuthProvider()
   return signInWithPopup(auth,gitHubAuth)
 }
 
 // teitter login
 const twitterLogin=()=>{
+  setLoading(true)
   const twitterAuth=new TwitterAuthProvider()
   return signInWithPopup(auth,twitterAuth)
 }
@@ -55,7 +60,7 @@ const logout=()=>{
 
 
 // constext api provided data.
-  const contextData = {emailPasswordLogin,googleLogin,gitHubLogin,twitterLogin,logout,emailPasswordSignin,user};
+  const contextData = {emailPasswordLogin,googleLogin,gitHubLogin,twitterLogin,logout,emailPasswordSignin,user,loading};
 
   return (
     <contextProvider.Provider value={contextData}>
