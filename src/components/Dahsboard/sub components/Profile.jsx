@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import useAxiosPublic from "../../../custom Hoocks/useAxiosPublic";
 import { contextProvider } from "../../../context api/Context";
+import { reload } from "firebase/auth";
+import { inputstyle } from "../../Login and sign up components/Login";
 
 const Profile = () => {
   const axiosPublic = useAxiosPublic();
@@ -8,6 +10,7 @@ const Profile = () => {
   // getting user data.
   const [data, setData] = useState(null);
   const [task, setTask] = useState([]);
+  const [refetch, setRefetch] = useState(false);
   useEffect(() => {
     if (user) {
       const email = user.email;
@@ -18,7 +21,7 @@ const Profile = () => {
         .post("/getAllTaskByEmail", { email })
         .then((res) => setTask(res.data));
     }
-  }, [user, axiosPublic]);
+  }, [user, axiosPublic, refetch]);
 
   // list styles
   const vise = "bg-gradient-to-l from-green-400 to-blue-500";
@@ -26,6 +29,32 @@ const Profile = () => {
 
   // show more text handle.
   const [showmore, setShowmore] = useState(false);
+// modal predata.
+const[predata,setPredata]=useState(null)
+
+//   modal form submit.
+
+const modalformHandle=(e)=>{
+    e.preventDefault()
+    const form=e.target
+    const title=form.title.value
+    const description=form.description.value
+    const date=form.date.value
+    const time=form.time.value
+    const priority=form.priority.value
+    const status=form.status.value
+    const id=predata._id
+
+    // placing a post request on server.
+
+    axiosPublic.post("/updateATaskMultipleField",{title,description,date,time,priority,status,id})
+    .then(res=>{
+        console.log(res.data)
+        setRefetch(!refetch)
+    })
+
+
+}
 
   return (
     <div className="border w-full h-full bg-gray-200">
@@ -60,7 +89,7 @@ const Profile = () => {
 
       {/* my added jobs. */}
 
-      <div className="mx-auto w-[80%] mt-10 min-h-72 bg-white rounded-3xl">
+      <div className="mx-auto w-[80%] mt-10 min-h-72 pb-2 bg-white rounded-3xl">
         <h1 className="text-center font-bold text-2xl py-3 mb-3">
           My added tasks
         </h1>
@@ -101,10 +130,25 @@ const Profile = () => {
                   </button>
                 </p>
                 <div className=" h-full w-80 flex justify-center items-center flex-col lg:flex-row gap-2">
-                  <button className="btn text-gray-800 btn-sm btn-success">
+                  <button
+                    onClick={() =>{
+                        setPredata(item)
+                      document.getElementById("my_modal_3").showModal()}
+                    }
+                    className="btn text-gray-800 btn-sm btn-success"
+                  >
                     Edit
                   </button>
-                  <button className="btn text-gray-800 btn-sm btn-warning">
+                  <button
+                    onClick={() => {
+                      const id = item._id;
+                      axiosPublic.post("/deleteATask", { id }).then((res) => {
+                        console.log(res.data);
+                        setRefetch(!refetch);
+                      });
+                    }}
+                    className="btn text-gray-800 btn-sm btn-warning"
+                  >
                     Delete
                   </button>
                 </div>
@@ -113,6 +157,46 @@ const Profile = () => {
           })}
         </ul>
       </div>
+
+      <dialog id="my_modal_3" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg text-center">Edit!</h3>
+          <form onSubmit={modalformHandle}>
+            <input required type="text" className={inputstyle} name="title" placeholder="enter title." defaultValue={predata?.title}/>
+            <textarea required className={inputstyle} name="description" placeholder="enter description" defaultValue={predata?.description}/>
+            <div>
+              <h1 className="text-center font-bold text-xl">Deadline</h1>
+              <div className="flex items-center gap-3">
+                <input required type="date" className={inputstyle} name="date" defaultValue={predata?.date}/>
+                <input required type="time" className={inputstyle} name="time" defaultValue={predata?.time}/>
+              </div>
+            </div>
+            <select required className={inputstyle} name="priority">
+              <option disabled selected>
+                Select Priority
+              </option>
+              <option value="High">High</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Low">Low</option>
+            </select>
+            <select required className={inputstyle} name="status">
+              <option disabled selected>
+                Select status
+              </option>
+              <option value="To-do">To-do</option>
+              <option value="Ongoing">Ongoing</option>
+              <option value="Completed">Completed</option>
+            </select>
+            <button className="btn btn-success btn-sm w-full">Submit</button>
+          </form>
+        </div>
+      </dialog>
     </div>
   );
 };
